@@ -188,6 +188,7 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 @property (nonatomic, assign) BOOL forcedToHide;
 @property (nonatomic, strong, readwrite) NSString *lastPostedMessage;
 
+- (void)setupStatusBarStyle;
 // intern method that posts a new entry to the message-queue
 - (void)postMessage:(NSString *)message type:(MTMessageType)messageType duration:(NSTimeInterval)duration animated:(BOOL)animated immediate:(BOOL)immediate;
 // intern method that clears the messageQueue and then posts a new entry to it
@@ -241,6 +242,17 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 
 @implementation MTStatusBarOverlay
 
+@synthesize customThemeTextColor = customThemeTextColor_;							
+@synthesize customThemeErrorMessageTextColor = customThemeErrorMessageTextColor_;             
+@synthesize customThemeFinishedMessageTextColor = customThemeFinishedMessageTextColor_;          
+@synthesize customThemeActivityIndicatorViewStyle = customThemeActivityIndicatorViewStyle_;
+@synthesize customThemeDetailViewBackgroundColor = customThemeDetailViewBackgroundColor_;
+@synthesize customThemeDetailViewBorderColor = customThemeDetailViewBorderColor_;
+@synthesize customThemeHistoryTextColor = customThemeHistoryTextColor_;	
+@synthesize customFinishBarBackgroundColor = customFinishBarBackgroundColor_;
+@synthesize customFailBarBackgroundColor = customFailBarBackgroundColor_;
+@synthesize customActivityBarBackgroundColor = customActivityBarBackgroundColor_;
+@synthesize statusBarStyle = statusBarStyle_;
 @synthesize backgroundView = backgroundView_;
 @synthesize detailView = detailView_;
 @synthesize statusBarBackgroundImageView = statusBarBackgroundImageView_;
@@ -285,6 +297,9 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 		if(IsIPhoneEmulationMode) {
 			statusBarFrame.size.width = 320.f;
 		}
+        
+        // setup statusBarStyle
+        [self setupStatusBarStyle];
         
 		// Place the window on the correct level and position
         self.windowLevel = UIWindowLevelStatusBar+1.f;
@@ -458,6 +473,22 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 #pragma mark -
 #pragma mark Status Bar Appearance
 ////////////////////////////////////////////////////////////////////////
+- (void)setupStatusBarStyle {
+    UIStatusBarStyle style = [UIApplication sharedApplication].statusBarStyle;
+    switch (style) {
+        case UIStatusBarStyleDefault:
+            statusBarStyle_ = MTUIStatusBarStyleDefault;
+            break;
+        case UIStatusBarStyleBlackOpaque:
+            statusBarStyle_ = MTUIStatusBarStyleBlackOpaque;
+            break;            
+        case UIStatusBarStyleBlackTranslucent:
+            statusBarStyle_ = MTUIStatusBarStyleBlackTranslucent;
+            break;                
+        default:
+            break;
+    }
+}
 
 - (void)addSubviewToBackgroundView:(UIView *)view {
 	view.userInteractionEnabled = NO;
@@ -667,9 +698,8 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(clearHistory) object:nil];
     
 	// update UI depending on current status bar style
-	UIStatusBarStyle statusBarStyle = [UIApplication sharedApplication].statusBarStyle;
-	[self setStatusBarBackgroundForStyle:statusBarStyle];
-	[self setColorSchemeForStatusBarStyle:statusBarStyle messageType:messageType];
+	[self setStatusBarBackgroundForStyle:statusBarStyle_];
+	[self setColorSchemeForStatusBarStyle:statusBarStyle_ messageType:messageType];
 	[self updateUIForMessageType:messageType duration:duration];
     
 	// if status bar is currently hidden, show it unless it is forced to hide
@@ -1061,10 +1091,12 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellID];
         
 		cell.textLabel.font = [UIFont boldSystemFontOfSize:10];
-		cell.textLabel.textColor = [UIApplication sharedApplication].statusBarStyle == UIStatusBarStyleDefault ? kLightThemeHistoryTextColor : kDarkThemeHistoryTextColor;
+		cell.textLabel.textColor = statusBarStyle_ == MTUIStatusBarStyleDefault ? kLightThemeHistoryTextColor : kDarkThemeHistoryTextColor;
+        cell.textLabel.textColor = statusBarStyle_ == MTUIStatusBarStyleCustom ? customThemeHistoryTextColor_ : cell.textLabel.textColor;
         
 		cell.detailTextLabel.font = [UIFont boldSystemFontOfSize:12];
 		cell.detailTextLabel.textColor = [UIApplication sharedApplication].statusBarStyle == UIStatusBarStyleDefault ? kLightThemeHistoryTextColor : kDarkThemeHistoryTextColor;
+        cell.detailTextLabel.textColor = statusBarStyle_ == MTUIStatusBarStyleCustom ? customThemeHistoryTextColor_ : cell.detailTextLabel.textColor;
 	}
     
 	// step 3: set up cell value
@@ -1155,7 +1187,7 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 - (void)setStatusBarBackgroundForStyle:(UIStatusBarStyle)style {
 	// gray status bar?
 	// on iPad the Default Status Bar Style is black too
-	if (style == UIStatusBarStyleDefault && !IsIPad && !IsIPhoneEmulationMode) {
+	if (statusBarStyle_ == MTUIStatusBarStyleDefault && !IsIPad && !IsIPhoneEmulationMode) {
 		// choose image depending on size
 		if (self.shrinked) {
 			self.statusBarBackgroundImageView.image = [self.defaultStatusBarImageShrinked stretchableImageWithLeftCapWidth:2.0f topCapHeight:0.0f];
@@ -1173,7 +1205,7 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 - (void)setColorSchemeForStatusBarStyle:(UIStatusBarStyle)style messageType:(MTMessageType)messageType {
 	// gray status bar?
 	// on iPad the Default Status Bar Style is black too
-	if (style == UIStatusBarStyleDefault && !IsIPad && !IsIPhoneEmulationMode) {
+	if (statusBarStyle_ == MTUIStatusBarStyleDefault && !IsIPad && !IsIPhoneEmulationMode) {
 		// set color of labels depending on messageType
         switch(messageType) {
             case MTMessageTypeFinish:
@@ -1210,7 +1242,7 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
         
         self.progressView.backgroundColor = [UIColor clearColor];
         self.progressView.image = [self.defaultStatusBarImageShrinked stretchableImageWithLeftCapWidth:2.0f topCapHeight:0.0f];
-	} else {
+	} else if (statusBarStyle_ == MTUIStatusBarStyleBlackOpaque || statusBarStyle_ == MTUIStatusBarStyleBlackTranslucent) {
 		// set color of labels depending on messageType
         switch(messageType) {
             case MTMessageTypeFinish:
@@ -1238,6 +1270,41 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 		self.detailView.layer.borderColor = [kDarkThemeDetailViewBorderColor CGColor];
 		self.historyTableView.separatorColor = kDarkThemeDetailViewBorderColor;
         self.detailTextView.textColor = kDarkThemeHistoryTextColor;
+        
+        self.progressView.backgroundColor = kProgressViewBackgroundColor;
+        self.progressView.image = nil;
+	}
+    else { //(statusBarStyle_ == MTUIStatusBarStyleBlackCustom ) {
+        // set color of labels depending on messageType
+        switch(messageType) {
+            case MTMessageTypeFinish:
+                self.statusLabel1.textColor = customThemeFinishedMessageTextColor_ ? customThemeFinishedMessageTextColor_:kDarkThemeFinishedMessageTextColor;
+                self.statusLabel2.textColor = customThemeFinishedMessageTextColor_ ? customThemeFinishedMessageTextColor_:kDarkThemeFinishedMessageTextColor;
+                self.finishedLabel.textColor = customThemeFinishedMessageTextColor_ ? customThemeFinishedMessageTextColor_:kDarkThemeFinishedMessageTextColor;
+                statusBarBackgroundImageView_.backgroundColor = customFinishBarBackgroundColor_ ? customFinishBarBackgroundColor_:[UIColor blackColor];
+                break;
+            case MTMessageTypeError:
+                self.statusLabel1.textColor = customThemeErrorMessageTextColor_ ? customThemeErrorMessageTextColor_:kDarkThemeErrorMessageTextColor;
+                self.statusLabel2.textColor = customThemeErrorMessageTextColor_ ? customThemeErrorMessageTextColor_:kDarkThemeErrorMessageTextColor;
+                self.finishedLabel.textColor = customThemeErrorMessageTextColor_ ? customThemeErrorMessageTextColor_: kDarkThemeErrorMessageTextColor;
+                statusBarBackgroundImageView_.backgroundColor = customFailBarBackgroundColor_ ? customFailBarBackgroundColor_:[UIColor blackColor];
+                break;
+            default:
+                self.statusLabel1.textColor = customThemeTextColor_ ? customThemeTextColor_:kDarkThemeTextColor;
+                self.statusLabel2.textColor = customThemeTextColor_ ? customThemeTextColor_:kDarkThemeTextColor;
+                self.finishedLabel.textColor = customThemeTextColor_ ? customThemeTextColor_:kDarkThemeTextColor;
+                statusBarBackgroundImageView_.backgroundColor = customActivityBarBackgroundColor_ ? customActivityBarBackgroundColor_:[UIColor blackColor];
+                break;
+        }
+        self.statusLabel1.shadowColor = nil;
+        self.statusLabel2.shadowColor = nil;
+        self.finishedLabel.shadowColor = nil;
+        
+		self.activityIndicator.activityIndicatorViewStyle = customThemeActivityIndicatorViewStyle_ ? customThemeActivityIndicatorViewStyle_:kDarkThemeActivityIndicatorViewStyle;
+		self.detailView.backgroundColor = customThemeDetailViewBackgroundColor_ ? customThemeDetailViewBackgroundColor_:kDarkThemeDetailViewBackgroundColor;;
+		self.detailView.layer.borderColor = customThemeDetailViewBorderColor_ ? [customThemeDetailViewBorderColor_ CGColor]:[kDarkThemeDetailViewBorderColor CGColor];
+		self.historyTableView.separatorColor = customThemeDetailViewBorderColor_?customThemeDetailViewBorderColor_:kDarkThemeDetailViewBorderColor;
+        self.detailTextView.textColor = customThemeHistoryTextColor_ ? customThemeHistoryTextColor_: kDarkThemeHistoryTextColor;
         
         self.progressView.backgroundColor = kProgressViewBackgroundColor;
         self.progressView.image = nil;
