@@ -203,9 +203,9 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 - (void)contentViewSwipedDown:(UIGestureRecognizer *)gestureRecognizer;
 
 // updates the current status bar background image for the given style and current size
-- (void)setStatusBarBackgroundForStyle:(UIStatusBarStyle)style;
+- (void)setStatusBarBackgroundForStyle:(MTUIStatusBarStyle)style;
 // updates the text-colors of the labels for the given style and message type
-- (void)setColorSchemeForStatusBarStyle:(UIStatusBarStyle)style messageType:(MTMessageType)messageType;
+- (void)setColorSchemeForStatusBarStyle:(MTUIStatusBarStyle)style messageType:(MTMessageType)messageType;
 // updates the visiblity of the activity indicator and finished-label depending on the type
 - (void)updateUIForMessageType:(MTMessageType)messageType duration:(NSTimeInterval)duration;
 // updates the size of the progressView to always cover only the displayed text-frame
@@ -1010,7 +1010,7 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 						 }
                          
 						 // update status bar background
-						 [self setStatusBarBackgroundForStyle:[UIApplication sharedApplication].statusBarStyle];
+						 [self setStatusBarBackgroundForStyle:statusBarStyle_];
 					 }];
 }
 
@@ -1184,7 +1184,7 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 #pragma mark Private Methods
 ////////////////////////////////////////////////////////////////////////
 
-- (void)setStatusBarBackgroundForStyle:(UIStatusBarStyle)style {
+- (void)setStatusBarBackgroundForStyle:(MTUIStatusBarStyle)style {
 	// gray status bar?
 	// on iPad the Default Status Bar Style is black too
 	if (statusBarStyle_ == MTUIStatusBarStyleDefault && !IsIPad && !IsIPhoneEmulationMode) {
@@ -1202,7 +1202,7 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 	}
 }
 
-- (void)setColorSchemeForStatusBarStyle:(UIStatusBarStyle)style messageType:(MTMessageType)messageType {
+- (void)setColorSchemeForStatusBarStyle:(MTUIStatusBarStyle)style messageType:(MTMessageType)messageType {
 	// gray status bar?
 	// on iPad the Default Status Bar Style is black too
 	if (statusBarStyle_ == MTUIStatusBarStyleDefault && !IsIPad && !IsIPhoneEmulationMode) {

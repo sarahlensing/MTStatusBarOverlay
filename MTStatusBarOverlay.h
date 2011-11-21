@@ -87,25 +87,25 @@ typedef enum MTMessageType {
  */
 @interface MTStatusBarOverlay : UIWindow <UITableViewDataSource>
 // only used if MTUIStatusBarStyleCustom:default is kDarkCustomThemeTextColor
-@property (nonatomic, assign) UIColor *customThemeTextColor;							
+@property (nonatomic, strong) UIColor *customThemeTextColor;							
 // only used if MTUIStatusBarStyleCustom:default is kDarkThemeErrorMessageTextColor
-@property (nonatomic, assign) UIColor *customThemeErrorMessageTextColor;             
+@property (nonatomic, strong) UIColor *customThemeErrorMessageTextColor;             
 // only used if MTUIStatusBarStyleCustom:default is kDarkThemeFinishedMessageTextColor
-@property (nonatomic, assign) UIColor *customThemeFinishedMessageTextColor;          
+@property (nonatomic, strong) UIColor *customThemeFinishedMessageTextColor;          
 // only used if MTUIStatusBarStyleCustom:default is kDarkThemeActivityIndicatorViewStyle
 @property (nonatomic, assign) UIActivityIndicatorViewStyle customThemeActivityIndicatorViewStyle;
 // only used if MTUIStatusBarStyleCustom:default is kDarkThemeDetailViewBackgroundColor
-@property (nonatomic, assign) UIColor *customThemeDetailViewBackgroundColor;
+@property (nonatomic, strong) UIColor *customThemeDetailViewBackgroundColor;
 // only used if MTUIStatusBarStyleCustom:default is kDarkThemeDetailViewBorderColor
-@property (nonatomic, assign) UIColor *customThemeDetailViewBorderColor;
+@property (nonatomic, strong) UIColor *customThemeDetailViewBorderColor;
 // only used if MTUIStatusBarStyleCustom:default is kDarkThemeHistoryTextColor
-@property (nonatomic, assign) UIColor *customThemeHistoryTextColor;	
+@property (nonatomic, strong) UIColor *customThemeHistoryTextColor;	
 // only used if MTUIStatusBarStyleCustom:default is [UIColor blackColor]
-@property (nonatomic, assign) UIColor *customFinishBarBackgroundColor;
+@property (nonatomic, strong) UIColor *customFinishBarBackgroundColor;
 // only used if MTUIStatusBarStyleCustom:default is [UIColor blackColor]
-@property (nonatomic, assign) UIColor *customFailBarBackgroundColor;
+@property (nonatomic, strong) UIColor *customFailBarBackgroundColor;
 // only used if MTUIStatusBarStyleCustom:default is [UIColor blackColor]
-@property (nonatomic, assign) UIColor *customActivityBarBackgroundColor;
+@property (nonatomic, strong) UIColor *customActivityBarBackgroundColor;
 // the default is set to whatever status bar style your app has
 @property (nonatomic, assign) MTUIStatusBarStyle statusBarStyle;
 // the view that holds all the components of the overlay (except for the detailView)
