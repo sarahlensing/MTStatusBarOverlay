@@ -1308,6 +1308,11 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
         
         self.progressView.backgroundColor = kProgressViewBackgroundColor;
         self.progressView.image = nil;
+        
+        statusBarBackgroundImageView_.layer.masksToBounds = YES;
+        statusBarBackgroundImageView_.layer.cornerRadius = 5.0f;      
+        statusBarBackgroundImageView_.layer.borderWidth = 1.0f;
+
 	}
 }
 
