@@ -87,31 +87,31 @@ typedef enum MTMessageType {
  */
 @interface MTStatusBarOverlay : UIWindow <UITableViewDataSource>
 // only used if MTUIStatusBarStyleCustom:default is kDarkCustomThemeTextColor
-@property (nonatomic, strong) UIColor *customThemeTextColor;							
+@property (nonatomic, retain) UIColor *customThemeTextColor;							
 // only used if MTUIStatusBarStyleCustom:default is kDarkThemeErrorMessageTextColor
-@property (nonatomic, strong) UIColor *customThemeErrorMessageTextColor;             
+@property (nonatomic, retain) UIColor *customThemeErrorMessageTextColor;             
 // only used if MTUIStatusBarStyleCustom:default is kDarkThemeFinishedMessageTextColor
-@property (nonatomic, strong) UIColor *customThemeFinishedMessageTextColor;          
+@property (nonatomic, retain) UIColor *customThemeFinishedMessageTextColor;          
 // only used if MTUIStatusBarStyleCustom:default is kDarkThemeActivityIndicatorViewStyle
 @property (nonatomic, assign) UIActivityIndicatorViewStyle customThemeActivityIndicatorViewStyle;
 // only used if MTUIStatusBarStyleCustom:default is kDarkThemeDetailViewBackgroundColor
-@property (nonatomic, strong) UIColor *customThemeDetailViewBackgroundColor;
+@property (nonatomic, retain) UIColor *customThemeDetailViewBackgroundColor;
 // only used if MTUIStatusBarStyleCustom:default is kDarkThemeDetailViewBorderColor
-@property (nonatomic, strong) UIColor *customThemeDetailViewBorderColor;
+@property (nonatomic, retain) UIColor *customThemeDetailViewBorderColor;
 // only used if MTUIStatusBarStyleCustom:default is kDarkThemeHistoryTextColor
-@property (nonatomic, strong) UIColor *customThemeHistoryTextColor;	
+@property (nonatomic, retain) UIColor *customThemeHistoryTextColor;	
 // only used if MTUIStatusBarStyleCustom:default is [UIColor blackColor]
-@property (nonatomic, strong) UIColor *customFinishBarBackgroundColor;
+@property (nonatomic, retain) UIColor *customFinishBarBackgroundColor;
 // only used if MTUIStatusBarStyleCustom:default is [UIColor blackColor]
-@property (nonatomic, strong) UIColor *customFailBarBackgroundColor;
+@property (nonatomic, retain) UIColor *customFailBarBackgroundColor;
 // only used if MTUIStatusBarStyleCustom:default is [UIColor blackColor]
-@property (nonatomic, strong) UIColor *customActivityBarBackgroundColor;
+@property (nonatomic, retain) UIColor *customActivityBarBackgroundColor;
 // the default is set to whatever status bar style your app has
 @property (nonatomic, assign) MTUIStatusBarStyle statusBarStyle;
 // the view that holds all the components of the overlay (except for the detailView)
-@property (nonatomic, strong) UIView *backgroundView;
+@property (nonatomic, retain) UIView *backgroundView;
 // the detailView is shown when animation is set to "FallDown"
-@property (nonatomic, strong) UIView *detailView;
+@property (nonatomic, retain) UIView *detailView;
 // the current progress
 @property (nonatomic, assign) double progress;
 // the frame of the status bar when animation is set to "Shrink" and it is shrinked
@@ -119,23 +119,23 @@ typedef enum MTMessageType {
 // the current active animation
 @property (nonatomic, assign) MTStatusBarOverlayAnimation animation;
 // the label that holds the finished-indicator (either a checkmark, or a error-sign per default)
-@property (nonatomic, strong) UILabel *finishedLabel;
+@property (nonatomic, retain) UILabel *finishedLabel;
 // if this flag is set to YES, neither activityIndicator nor finishedLabel are shown
 @property (nonatomic, assign) BOOL hidesActivity;
 // the image used when the Status Bar Style is Default
-@property (nonatomic, strong) UIImage *defaultStatusBarImage;
+@property (nonatomic, retain) UIImage *defaultStatusBarImage;
 // the image used when the Status Bar Style is Default and the Overlay is shrinked
-@property (nonatomic, strong) UIImage *defaultStatusBarImageShrinked;
+@property (nonatomic, retain) UIImage *defaultStatusBarImageShrinked;
 // detect if status bar is currently shrinked
 @property (nonatomic, readonly, getter=isShrinked) BOOL shrinked;
 // detect if detailView is currently hidden
 @property (nonatomic, readonly, getter=isDetailViewHidden) BOOL detailViewHidden;
 // all messages that were displayed since the last finish-call
-@property (nonatomic, strong, readonly) NSMutableArray *messageHistory;
+@property (nonatomic, retain, readonly) NSMutableArray *messageHistory;
 // DEPRECATED: enable/disable history-tracking of messages
 @property (nonatomic, assign, getter=isHistoryEnabled) BOOL historyEnabled;
 // the last message that was visible
-@property (nonatomic, strong, readonly) NSString *lastPostedMessage;
+@property (nonatomic, retain, readonly) NSString *lastPostedMessage;
 // determines if immediate messages in the queue get removed or stay in the queue, when a new immediate message gets posted
 @property (nonatomic, assign) BOOL canRemoveImmediateMessagesFromQueue;
 // the mode of the detailView
@@ -143,7 +143,7 @@ typedef enum MTMessageType {
 // the text displayed in the detailView (alternative to history)
 @property (nonatomic, copy) NSString *detailText;
 // the delegate of the overlay
-@property (nonatomic, unsafe_unretained) id<MTStatusBarOverlayDelegate> delegate;
+@property (nonatomic, assign) id<MTStatusBarOverlayDelegate> delegate;
 
 
 //===========================================================

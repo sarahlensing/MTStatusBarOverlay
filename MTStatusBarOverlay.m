@@ -167,26 +167,26 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 
 @interface MTStatusBarOverlay ()
 
-@property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
-@property (nonatomic, strong) UIImageView *statusBarBackgroundImageView;
-@property (nonatomic, strong) UILabel *statusLabel1;
-@property (nonatomic, strong) UILabel *statusLabel2;
-@property (nonatomic, unsafe_unretained) UILabel *hiddenStatusLabel;
-@property (unsafe_unretained, nonatomic, readonly) UILabel *visibleStatusLabel;
-@property (nonatomic, strong) UIImageView *progressView;
+@property (nonatomic, retain) UIActivityIndicatorView *activityIndicator;
+@property (nonatomic, retain) UIImageView *statusBarBackgroundImageView;
+@property (nonatomic, retain) UILabel *statusLabel1;
+@property (nonatomic, retain) UILabel *statusLabel2;
+@property (nonatomic, assign) UILabel *hiddenStatusLabel;
+@property (nonatomic, readonly) UILabel *visibleStatusLabel;
+@property (nonatomic, retain) UIImageView *progressView;
 @property (nonatomic, assign) CGRect oldBackgroundViewFrame;
 // overwrite property for read-write-access
 @property (assign, getter=isHideInProgress) BOOL hideInProgress;
 @property (assign, getter=isActive) BOOL active;
 // read out hidden-state using alpha-value and hidden-property
 @property (nonatomic, readonly, getter=isReallyHidden) BOOL reallyHidden;
-@property (nonatomic, strong) UITextView *detailTextView;
-@property (nonatomic, strong) NSMutableArray *messageQueue;
+@property (nonatomic, retain) UITextView *detailTextView;
+@property (nonatomic, retain) NSMutableArray *messageQueue;
 // overwrite property for read-write-access
-@property (nonatomic, strong) NSMutableArray *messageHistory;
-@property (nonatomic, strong) UITableView *historyTableView;
+@property (nonatomic, retain) NSMutableArray *messageHistory;
+@property (nonatomic, retain) UITableView *historyTableView;
 @property (nonatomic, assign) BOOL forcedToHide;
-@property (nonatomic, strong, readwrite) NSString *lastPostedMessage;
+@property (nonatomic, retain, readwrite) NSString *lastPostedMessage;
 
 - (void)setupStatusBarStyle;
 // intern method that posts a new entry to the message-queue
@@ -366,7 +366,7 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
         oldBackgroundViewFrame_ = backgroundView_.frame;
         
 		// Add gesture recognizers
-		UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(contentViewClicked:)];
+		UITapGestureRecognizer *tapGestureRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(contentViewClicked:)]autorelease];
 		//UISwipeGestureRecognizer *upGestureRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(contentViewSwipedUp:)] autorelease];
 		//UISwipeGestureRecognizer *downGestureRecognizer = [[[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(contentViewSwipedDown:)] autorelease];
         
@@ -378,8 +378,8 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 		//[self addGestureRecognizer:downGestureRecognizer];
         
 		// Images used as background when status bar style is Default
-		defaultStatusBarImage_ = [UIImage imageWithData:MTStatusBarBackgroundImageData(NO)];
-		defaultStatusBarImageShrinked_ = [UIImage imageWithData:MTStatusBarBackgroundImageData(YES)];
+		defaultStatusBarImage_ = [[UIImage imageWithData:MTStatusBarBackgroundImageData(NO)]retain];
+		defaultStatusBarImageShrinked_ = [[UIImage imageWithData:MTStatusBarBackgroundImageData(YES)]retain];
         
 		// Background-Image of the Content View
 		statusBarBackgroundImageView_ = [[UIImageView alloc] initWithFrame:backgroundView_.frame];
@@ -466,7 +466,33 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
     
+    [customThemeTextColor_ release], customThemeTextColor_ = nil;							
+    [customThemeErrorMessageTextColor_ release], customThemeErrorMessageTextColor_ = nil;             
+    [customThemeFinishedMessageTextColor_ release], customThemeFinishedMessageTextColor_ = nil;                       
+    [customThemeDetailViewBackgroundColor_ release], customThemeDetailViewBackgroundColor_ = nil;             
+    [customThemeDetailViewBorderColor_ release], customThemeDetailViewBorderColor_ = nil;             
+    [customThemeHistoryTextColor_ release], customThemeHistoryTextColor_ = nil;             
+    [customFinishBarBackgroundColor_ release], customFinishBarBackgroundColor_ = nil;             
+    [customFailBarBackgroundColor_ release], customFailBarBackgroundColor_ = nil;             
+    [customActivityBarBackgroundColor_ release], customActivityBarBackgroundColor_ = nil;             
+    [backgroundView_ release], backgroundView_ = nil; 	
+    [detailView_ release], detailView_ = nil;
+    [statusBarBackgroundImageView_ release], statusBarBackgroundImageView_ = nil;
+    [statusLabel1_ release], statusLabel1_ = nil;
+    [statusLabel2_ release], statusLabel2_ = nil;
+    [progressView_ release], progressView_ = nil;
+    [activityIndicator_ release], activityIndicator_ = nil;
+    [finishedLabel_ release], finishedLabel_ = nil;
+    [defaultStatusBarImage_ release], defaultStatusBarImage_ = nil;
+    [defaultStatusBarImageShrinked_ release], defaultStatusBarImageShrinked_ = nil;
+    [detailText_ release], detailText_ = nil;
+    [detailTextView_ release], detailTextView_ = nil;
+    [messageQueue_ release], messageQueue_ = nil;
+    [messageHistory_ release], messageHistory_ = nil;
+    
 	delegate_ = nil;
+    
+    [super dealloc];
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1088,7 +1114,7 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
     
 	// step 2: no? -> create new cell
 	if (cell == nil) {
-		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellID];
+		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellID]autorelease];
         
 		cell.textLabel.font = [UIFont boldSystemFontOfSize:10];
 		cell.textLabel.textColor = statusBarStyle_ == MTUIStatusBarStyleDefault ? kLightThemeHistoryTextColor : kDarkThemeHistoryTextColor;
@@ -1487,7 +1513,7 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
 
 + (MTStatusBarOverlay *)sharedInstance {
     static dispatch_once_t pred;
-    __strong static MTStatusBarOverlay *sharedOverlay = nil; 
+    static MTStatusBarOverlay *sharedOverlay = nil; 
     
     dispatch_once(&pred, ^{ 
         sharedOverlay = [[MTStatusBarOverlay alloc] init]; 
